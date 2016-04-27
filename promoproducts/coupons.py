@@ -3,7 +3,7 @@ import pdb
 import time
 from bs4 import BeautifulSoup
 
-class Coupon:
+class Coupon(object):
     def __init__(self):
         self.valid_coupons = {}
         self.stores = {

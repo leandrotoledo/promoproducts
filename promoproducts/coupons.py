@@ -1,10 +1,17 @@
 import urllib
+import pdb
+import time
 from bs4 import BeautifulSoup
 
 class Coupon:
-
     def __init__(self):
-        pass
+        self.valid_coupons = {}
+        self.stores = {
+            1: "ponto-frio",
+            2: "walmart",
+            3: "ricardo-eletro",
+            4: "extra"
+        }
 
     def couponurl(self, store):
         # Base of URL of coupons page
@@ -25,9 +32,24 @@ class Coupon:
         # get coupons
         coupons = soup.select('ul.vt-skin-green li.vt-line div.vt-content')
 
+        key = 0
         for coupon in coupons:
             # coupon's code
             cod = coupon.find_all('a', attrs={'data-cupom': True})
 
             if cod:
-                print cod[0]['data-cupom']
+                self.valid_coupons[key] = {
+                                            "cod": cod[0]['data-cupom'],
+                                            "store": store,
+                                            "time": time.strftime("%x")
+                                          }
+                key = key + 1
+
+        return self.valid_coupons
+
+    def allcoupons(self):
+        if self.valid_coupons:
+            for i in self.valid_coupons:
+                print self.valid_coupons[i]
+        else:
+            return "There's no coupon"

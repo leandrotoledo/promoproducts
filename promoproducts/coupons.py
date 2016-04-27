@@ -20,32 +20,38 @@ class Coupon:
 
         return url
 
-    def getcoupons(self, store):
-        url = self.couponurl(store)
+    def getcoupons(self):
+        for i in self.stores:
+            store = self.stores[i]
+            url = self.couponurl(store)
 
-        # HTML of coupons page
-        html = urllib.urlopen(url).read()
+            # HTML of coupons page
+            html = urllib.urlopen(url).read()
 
-        # making a soup
-        soup = BeautifulSoup(html)
+            # making a soup
+            soup = BeautifulSoup(html)
 
-        # get coupons
-        coupons = soup.select('ul.vt-skin-green li.vt-line div.vt-content')
+            # get coupons
+            coupons = soup.select('ul.vt-skin-green li.vt-line div.vt-content')
 
-        key = 0
-        for coupon in coupons:
-            # coupon's code
-            cod = coupon.find_all('a', attrs={'data-cupom': True})
+            key = 0
+            for coupon in coupons:
+                # coupon's code
+                cod = coupon.find_all('a', attrs={'data-cupom': True})
 
-            if cod:
-                self.valid_coupons[key] = {
-                                            "cod": cod[0]['data-cupom'],
-                                            "store": store,
-                                            "time": time.strftime("%x")
-                                          }
-                key = key + 1
+                if cod:
+                    self.valid_coupons[key] = {
+                                                "cod": cod[0]['data-cupom'],
+                                                "store": store,
+                                                "time": time.strftime("%x")
+                                              }
+                    key = key + 1
 
         return self.valid_coupons
+
+    def allstores(self):
+        for store in self.stores:
+            print self.stores[store]
 
     def allcoupons(self):
         if self.valid_coupons:

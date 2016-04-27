@@ -2,28 +2,24 @@ import urllib
 import pdb
 import time
 from bs4 import BeautifulSoup
+from promoproducts import Promoproducts
 
 class Coupon:
     def __init__(self):
         self.valid_coupons = {}
-        self.stores = {
-            1: "ponto-frio",
-            2: "walmart",
-            3: "ricardo-eletro",
-            4: "extra"
-        }
+        self.stores = Promoproducts().get_stores()
 
-    def couponurl(self, store):
+    def coupon_url(self, store):
         # Base of URL of coupons page
         base_url = 'http://blog.thiagorodrigo.com.br/cupom-desconto-'
         url = base_url + store
 
         return url
 
-    def getcoupons(self):
+    def get_coupons(self):
         for i in self.stores:
             store = self.stores[i]
-            url = self.couponurl(store)
+            url = self.coupon_url(store)
 
             # HTML of coupons page
             html = urllib.urlopen(url).read()
@@ -49,11 +45,7 @@ class Coupon:
 
         return self.valid_coupons
 
-    def allstores(self):
-        for store in self.stores:
-            print self.stores[store]
-
-    def allcoupons(self):
+    def all_coupons(self):
         if self.valid_coupons:
             for i in self.valid_coupons:
                 print self.valid_coupons[i]

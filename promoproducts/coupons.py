@@ -4,7 +4,7 @@ import time
 from bs4 import BeautifulSoup
 from promoproducts import Promoproducts
 
-class Coupon:
+class Coupon(object):
     def __init__(self):
         self.valid_coupons = {}
         self.stores = Promoproducts().get_stores()

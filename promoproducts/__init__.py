@@ -6,12 +6,7 @@ __email__ = 'leandro.muto@gmail.com'
 
 class Promoproducts(object):
     def __init__(self):
-        self.stores = {
-            1: "ponto-frio",
-            2: "walmart",
-            3: "ricardo-eletro",
-            4: "extra"
-        }
+        self.stores = ["ponto-frio", "walmart", "ricardo-eletro", "extra"]
 
     def get_stores(self):
         return self.stores

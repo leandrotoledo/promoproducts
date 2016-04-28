@@ -9,4 +9,12 @@ class Promoproducts(object):
         self.stores = ["ponto-frio", "walmart", "ricardo-eletro", "extra"]
 
     def get_stores(self):
+        """
+        Method for get all stores.
+
+        Return:
+            :return: Returns a list of stores.
+
+        :return:
+        """
         return self.stores

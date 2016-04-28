@@ -10,6 +10,16 @@ class Coupon(object):
         self.stores = Promoproducts().get_stores()
 
     def coupon_url(self, store):
+        """
+        Method to generate coupon website for specific store
+
+        Args:
+            :param store: (string) Store name
+
+        Return:
+            :return: Returns the url of coupon website
+        """
+
         # Base of URL of coupons page
         base_url = 'http://blog.thiagorodrigo.com.br/cupom-desconto-'
         url = base_url + store
@@ -17,6 +27,13 @@ class Coupon(object):
         return url
 
     def get_coupons(self):
+        """
+        Method to get coupons from website
+
+        Return:
+            :return: Returns an array of valid coupons after search for them in website
+        """
+
         for store in self.stores:
             url = self.coupon_url(store)
 
@@ -44,8 +61,13 @@ class Coupon(object):
         return self.valid_coupons
 
     def all_coupons(self):
+        """
+        Get all cupons from valid_coupons variable.
+
+        Return:
+            :return: Returns a list of coupons. If valid_coupon is empty, then returns none.
+        """
         if self.valid_coupons:
-            for item in self.valid_coupons:
-                print item
+            return self.valid_coupons
         else:
-            return "There's no coupon"
+            return

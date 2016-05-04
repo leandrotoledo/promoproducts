@@ -65,7 +65,7 @@ class Coupon(object):
         Get all cupons from valid_coupons variable.
 
         Return:
-            :return: Returns a list of coupons. If valid_coupon is empty, then returns none.
+            :return: Returns a list of cupons. If valid_coupon is empty, then returns none.
         """
         if self.valid_coupons:
             return self.valid_coupons

@@ -1,4 +1,4 @@
-"""This module contains a object that represents Tests for Coupon class"""
+"""This module contains an object that represents Tests for Coupon class"""
 
 import sys
 import unittest

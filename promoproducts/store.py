@@ -22,8 +22,6 @@ class Store(object):
                                 'Telefonia', 'Eletrônicos'
         ]
 
-        # self.departments = ['Eletrodomésticos']
-
     def call_me(self):
 
         loja_completa = []
@@ -42,8 +40,6 @@ class Store(object):
                 c['category_products'] = self.get_products(c['category_href'])
 
             print(d)
-
-            pdb.set_trace()
 
         return loja_completa
 
@@ -137,9 +133,6 @@ class Store(object):
             for p in products:
                 # if prod is available then will be 1
                 available = 1
-
-                if type(p) == dict:
-                    pdb.set_trace()
 
                 # prod price
                 from_price = p.find('span', attrs={'class': 'from price regular'})

@@ -46,7 +46,7 @@ class Store(object):
 
         return store_prods
 
-    def get_departments(self, depto):
+    def get_departments(self, depto_css):
         depts = []
 
         # HTML of coupons page
@@ -55,7 +55,7 @@ class Store(object):
         # making a soup
         soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
 
-        departments_link = soup.select(depto)
+        departments_link = soup.select(depto_css)
 
         for d in departments_link:
             if d.text.encode('utf8') in self.departments:
@@ -66,7 +66,7 @@ class Store(object):
 
         return depts
 
-    def get_categories(self, dept, category):
+    def get_categories(self, dept, category_css):
         """
         Get all categories from Extra departments.
         E.g. Bonecos, Playground etc from Brinquedos
@@ -87,7 +87,7 @@ class Store(object):
         soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
 
         # all categories available
-        categories_link = soup.select(category)
+        categories_link = soup.select(category_css)
 
         for c in categories_link:
             categories.append({
@@ -233,3 +233,16 @@ class Extra(Store):
 
     def get_products(self, category, product_css):
         return super(Extra, self).get_products(category, product_css)
+
+class PontoFrio(Store):
+    def call_me(self):
+        super(PontoFrio, self).call_me()
+
+    def get_departments(self, depto_css):
+        return super(PontoFrio, self).get_departments(depto_css)
+
+    def get_categories(self, dept, category_css):
+        return super(PontoFrio, self).get_categories(dept, category_css)
+
+    def get_products(self, category, product_css):
+        return super(PontoFrio, self).get_products(category, product_css)

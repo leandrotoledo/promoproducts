@@ -1,5 +1,5 @@
 from coupon import Coupon
-from store import Store
+from store import *
 
 import urllib
 from bs4 import BeautifulSoup
@@ -9,6 +9,6 @@ c = Coupon()
 c.get_coupons()
 print c.all_coupons()
 
-s = Store()
+e = Extra()
 
-print s.call_me()
+print e.call_me()

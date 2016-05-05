@@ -24,7 +24,7 @@ class Store(object):
 
     def call_me(self):
 
-        loja_completa = []
+        store_prods = []
 
         # retorna uma list de dicts com todos os departamentos
         depts = self.get_departments(self.store)
@@ -41,9 +41,9 @@ class Store(object):
 
             print(d)
 
-        return loja_completa
+        return store_prods
 
-    def get_departments(self, store):
+    def get_departments(self, store, depto):
         depts = []
 
         # HTML of coupons page
@@ -63,7 +63,7 @@ class Store(object):
 
         return depts
 
-    def get_categories(self, dept):
+    def get_categories(self, dept, category):
         """
         Get all categories from Extra departments.
         E.g. Bonecos, Playground etc from Brinquedos
@@ -94,12 +94,16 @@ class Store(object):
 
         return categories
 
-    def get_products(self, category):
+    def get_products(self, category, product, from_price, on_sale, next_page=None):
         """
         Get all products from one category.
 
         Param:
             :param category: (str) a link to the category from department
+            :param product: (str) the CSS of product wrapper
+            :param from_price: (str) the CSS of normal price of product
+            :param on_sale: (str) the CSS of on sale price of product
+            :param next_page: (str) the CSS of next page link
 
         Return:
             :return: Returns a list of products informations
@@ -169,3 +173,17 @@ class Store(object):
                     category_next_page = category_next_page[0]['href']
                 else:
                     next_page = False
+
+
+class Extra(Store):
+    def call_me(self):
+        super(Extra, self).call_me()
+    
+    def get_departments(self, store, depto):
+        super(Extra, self).get_departments(store, depto)
+        
+    def get_categories(self, dept, category):
+        super(Extra, self).get_categories(dept, category)
+
+    def get_products(self, category, product, from_price, on_sale, next_page=None):
+        super(Extra, self).get_products(category, product, from_price, on_sale, next_page=None)

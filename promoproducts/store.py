@@ -7,11 +7,11 @@ from bs4 import BeautifulSoup
 from promoproducts import Promoproducts
 
 class Store(object):
-    def __init__(self):
+    def __init__(self, store):
         self.encoding = Promoproducts().encoding
         self.stores = Promoproducts().get_stores()
 
-        self.store = 'http://www.extra.com.br'
+        self.store = store
 
         self.departments = [
                                 'Beleza e Saúde', 'Brinquedos',
@@ -27,9 +27,12 @@ class Store(object):
         store_prods = []
 
         # retorna uma list de dicts com todos os departamentos
-        depts = self.get_departments(self.store)
+        depts = self.get_departments(self.store, [])
 
         print(depts)
+
+        if not depts:
+            return []
 
         for d in depts:
             d['department_categories'] = self.get_categories(d['department_href'])
@@ -43,14 +46,14 @@ class Store(object):
 
         return store_prods
 
-    def get_departments(self, store, depto):
+    def get_departments(self, depto):
         depts = []
 
         # HTML of coupons page
-        html = urllib.urlopen(store).read()
+        html = urllib.urlopen(self.store).read()
 
         # making a soup
-        soup = BeautifulSoup(html, from_encoding = self.encoding)
+        soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
 
         departments_link = soup.select('li.nav-item-todos li.navsub-item a')
 
@@ -63,7 +66,7 @@ class Store(object):
 
         return depts
 
-    def get_categories(self, dept, category):
+    def get_categories(self, dept, category=None):
         """
         Get all categories from Extra departments.
         E.g. Bonecos, Playground etc from Brinquedos
@@ -81,7 +84,7 @@ class Store(object):
         html = urllib.urlopen(dept).read()
 
         # making a soup
-        soup = BeautifulSoup(html, from_encoding = self.encoding)
+        soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
 
         # all categories available
         categories_link = soup.select('div.navigation h3.tit > a')
@@ -94,7 +97,7 @@ class Store(object):
 
         return categories
 
-    def get_products(self, category, product, from_price, on_sale, next_page=None):
+    def get_products(self, category, product=None, from_price=None, on_sale=None, next_page=None):
         """
         Get all products from one category.
 
@@ -128,7 +131,7 @@ class Store(object):
                 html = urllib.urlopen(category_next_page).read()
 
             # making a soup
-            soup = BeautifulSoup(html, from_encoding = self.encoding)
+            soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
 
             # prods from page
             products = soup.select('div.lista-produto div.hproduct')
@@ -179,9 +182,9 @@ class Extra(Store):
     def call_me(self):
         super(Extra, self).call_me()
     
-    def get_departments(self, store, depto):
-        super(Extra, self).get_departments(store, depto)
-        
+    def get_departments(self, depto):
+        return super(Extra, self).get_departments(depto)
+
     def get_categories(self, dept, category):
         super(Extra, self).get_categories(dept, category)
 

@@ -55,7 +55,7 @@ class Store(object):
         # making a soup
         soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
 
-        departments_link = soup.select('li.nav-item-todos li.navsub-item a')
+        departments_link = soup.select(depto)
 
         for d in departments_link:
             if d.text.encode('utf8') in self.departments:
@@ -66,7 +66,7 @@ class Store(object):
 
         return depts
 
-    def get_categories(self, dept, category=None):
+    def get_categories(self, dept, category):
         """
         Get all categories from Extra departments.
         E.g. Bonecos, Playground etc from Brinquedos
@@ -87,7 +87,7 @@ class Store(object):
         soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
 
         # all categories available
-        categories_link = soup.select('div.navigation h3.tit > a')
+        categories_link = soup.select(category)
 
         for c in categories_link:
             categories.append({
@@ -97,7 +97,7 @@ class Store(object):
 
         return categories
 
-    def get_products(self, category, product=None, from_price=None, on_sale=None, next_page=None):
+    def get_products(self, category, product_css):
         """
         Get all products from one category.
 
@@ -111,71 +111,114 @@ class Store(object):
         Return:
             :return: Returns a list of products informations
         """
+        products = []
 
-        products_list = []
+        # HTML of category page
+        html = urllib.urlopen(category).read()
 
-        first_time = True
+        # making a soup
+        soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
 
-        # just for loop works for the first time
-        next_page = True
+        # prods from page
+        ps = soup.select(product_css)
 
-        while next_page:
+        # infos of single prod
+        for p in ps:
+            # if prod is available then will be 1
+            available = 1
 
-            if first_time:
-                # HTML of category page
-                html = urllib.urlopen(category).read()
+            # prod price
+            from_price = p.find('span', attrs={'class': 'from price regular'})
+            on_sale = p.find('span', attrs={'class': 'for price sale'})
 
-                first_time = False
+            if on_sale is None:
+                on_sale = "R$ 0"
+                available = 0  # when the product is not available
             else:
-                # HTML of category page
-                html = urllib.urlopen(category_next_page).read()
+                on_sale = on_sale.strong.text
 
-            # making a soup
-            soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
+            if from_price is None:
+                from_price = on_sale
+            else:
+                from_price = from_price.strong.text
 
-            # prods from page
-            products = soup.select('div.lista-produto div.hproduct')
+            # all info of prod together
+            prod = {
+                'product_name': p.a['title'],
+                'product_img': p.span.img['data-src'],
+                'product_href': p.a['href'],
+                'product_from_price': from_price,
+                'product_on_sale': on_sale,
+                'product_available': available,
+            }
 
-            # infos of single prod
-            for p in products:
-                # if prod is available then will be 1
-                available = 1
+            products.append(prod)
 
-                # prod price
-                from_price = p.find('span', attrs={'class': 'from price regular'})
-                on_sale = p.find('span', attrs={'class': 'for price sale'})
+        return products
 
-                if on_sale is None:
-                    on_sale = "R$ 0"
-                    available = 0 # when the product is not available
-                else:
-                    on_sale = on_sale.strong.text
 
-                if from_price is None:
-                    from_price = on_sale
-                else:
-                    from_price = from_price.strong.text
-
-                # all info of prod together
-                prod = {
-                    'product_name': p.a['title'],
-                    'product_img': p.span.img['data-src'],
-                    'product_href': p.a['href'],
-                    'product_from_price': from_price,
-                    'product_on_sale': on_sale,
-                    'product_available': available,
-                }
-
-                print(prod)
-
-                products_list.append(prod)
-
-                category_next_page = soup.select('div.pagination li.next > a')
-
-                if category_next_page:
-                    category_next_page = category_next_page[0]['href']
-                else:
-                    next_page = False
+        # products_list = []
+        #
+        # first_time = True
+        #
+        # # just for loop works for the first time
+        # next_page = True
+        #
+        # while next_page:
+        #
+        #     if first_time:
+        #         # HTML of category page
+        #         html = urllib.urlopen(category).read()
+        #
+        #         first_time = False
+        #     else:
+        #         # HTML of category page
+        #         html = urllib.urlopen(category_next_page).read()
+        #
+        #     # making a soup
+        #     soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
+        #
+        #     # prods from page
+        #     products = soup.select('div.lista-produto div.hproduct')
+        #
+        #     # infos of single prod
+        #     for p in products:
+        #         # if prod is available then will be 1
+        #         available = 1
+        #
+        #         # prod price
+        #         from_price = p.find('span', attrs={'class': 'from price regular'})
+        #         on_sale = p.find('span', attrs={'class': 'for price sale'})
+        #
+        #         if on_sale is None:
+        #             on_sale = "R$ 0"
+        #             available = 0 # when the product is not available
+        #         else:
+        #             on_sale = on_sale.strong.text
+        #
+        #         if from_price is None:
+        #             from_price = on_sale
+        #         else:
+        #             from_price = from_price.strong.text
+        #
+        #         # all info of prod together
+        #         prod = {
+        #             'product_name': p.a['title'],
+        #             'product_img': p.span.img['data-src'],
+        #             'product_href': p.a['href'],
+        #             'product_from_price': from_price,
+        #             'product_on_sale': on_sale,
+        #             'product_available': available,
+        #         }
+        #
+        #         products_list.append(prod)
+        #
+        #         category_next_page = soup.select('div.pagination li.next > a')
+        #
+        #         if category_next_page:
+        #             category_next_page = category_next_page[0]['href']
+        #         else:
+        #             next_page = False
 
 
 class Extra(Store):
@@ -186,7 +229,7 @@ class Extra(Store):
         return super(Extra, self).get_departments(depto)
 
     def get_categories(self, dept, category):
-        super(Extra, self).get_categories(dept, category)
+        return super(Extra, self).get_categories(dept, category)
 
-    def get_products(self, category, product, from_price, on_sale, next_page=None):
-        super(Extra, self).get_products(category, product, from_price, on_sale, next_page=None)
+    def get_products(self, category, product_css):
+        return super(Extra, self).get_products(category, product_css)

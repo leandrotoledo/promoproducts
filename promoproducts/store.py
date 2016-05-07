@@ -51,9 +51,6 @@ class Store(object):
         # HTML of coupons page
         html = urllib.urlopen(self.store).read()
 
-        import pdb;
-        pdb.set_trace()
-
         # making a soup
         soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
 

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import urllib
-import pdb
-import promoproducts
+import re
 from bs4 import BeautifulSoup
 from promoproducts import Promoproducts
 
@@ -51,6 +50,9 @@ class Store(object):
 
         # HTML of coupons page
         html = urllib.urlopen(self.store).read()
+
+        import pdb;
+        pdb.set_trace()
 
         # making a soup
         soup = BeautifulSoup(html, "html.parser", from_encoding=self.encoding)
@@ -132,25 +134,27 @@ class Store(object):
             on_sale = p.find('span', attrs={'class': 'for price sale'})
 
             if on_sale is None:
-                on_sale = "R$ 0"
+                os = 0
                 available = 0  # when the product is not available
             else:
-                on_sale = on_sale.strong.text
-
+                os = re.findall(r'([0-9]+\W+[0-9].)', str(on_sale).replace(',', '.'))[0]
+                # import pdb; pdb.set_trace()
             if from_price is None:
-                from_price = on_sale
+                fp = os
             else:
-                from_price = from_price.strong.text
+                fp = re.findall(r'([0-9]+\W+[0-9].)', str(from_price).replace(',', '.'))[0]
 
             # all info of prod together
             prod = {
                 'product_name': p.a['title'],
                 'product_img': p.span.img['data-src'],
                 'product_href': p.a['href'],
-                'product_from_price': from_price,
-                'product_on_sale': on_sale,
+                'product_from_price': float(fp),
+                'product_on_sale': float(os),
                 'product_available': available,
             }
+
+            # print(prod)
 
             products.append(prod)
 
@@ -246,3 +250,16 @@ class PontoFrio(Store):
 
     def get_products(self, category, product_css):
         return super(PontoFrio, self).get_products(category, product_css)
+
+class RicardoEletro(Store):
+    def call_me(self):
+        super(RicardoEletro, self).call_me()
+
+    def get_departments(self, depto_css):
+        return super(RicardoEletro, self).get_departments(depto_css)
+
+    def get_categories(self, dept, category_css):
+        return super(RicardoEletro, self).get_categories(dept, category_css)
+
+    def get_products(self, category, product_css):
+        return super(RicardoEletro, self).get_products(category, product_css)
